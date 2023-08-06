@@ -2,16 +2,21 @@ package com.example.ThirdWheelBotTG.service;
 
 
 import com.example.ThirdWheelBotTG.config.BotConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+
+
 /**
  * This class is responsible for receiving updates from Telegram API
  * and sending messages to users
+ * @author Nikita
  */
+@Slf4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
@@ -69,6 +74,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void startCommandReceived( long chatId, String name){
         String answer = "Hello, " + name + "!";
+        log.info("Replied to user " + name + " with message: " + answer);
 
         sendMessage(chatId, answer);
 
@@ -82,7 +88,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+           log.error("Error while sending message: " + e.getMessage());
         }
     }
 }
