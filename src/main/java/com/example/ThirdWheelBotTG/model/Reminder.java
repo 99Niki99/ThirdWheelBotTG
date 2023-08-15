@@ -18,25 +18,9 @@ import lombok.Setter;
 @Entity(name = "remindersDataTable")
 
 public class Reminder {
+
     @Id
-
     private String userName;
-    private String txtMesdsage;
+    private String txtMessage;
     private String time;
-
-    /**
-     * This method is used to create a reminder
-     * @param id
-     * @param txtMesdsage
-     * @param time
-     */
-    public Reminder(Long id, String txtMesdsage, String time) {
-        this.userName = String.valueOf(id);
-        this.txtMesdsage = txtMesdsage;
-        this.time = time;
-    }
-
-    public Reminder() {
-
-    }
 }

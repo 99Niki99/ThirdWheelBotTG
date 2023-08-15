@@ -14,75 +14,75 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
  * This class is responsible for sending reminders to users
  * It is scheduled to run every minute
  * It checks if there are any reminders to send
  * If there are, it sends them
+ *
+ * @author Nikita
  */
 @Slf4j
 @Service
 public class AutomatedReminderServiceTGBot {
 
 
-        private LocalDate reminderDate;
-        private LocalTime reminderTime;
+    private LocalDate reminderDate;
 
-        String[] mesageTxt = new String[3];
+    Map<String, String[]> reminders = new HashMap<>();
 
-        /**
-         * This method is scheduled to run every minute
-         * It checks if there are any reminders to send
-         * If there are, it sends them
-         */
-        public void separateMsd(String msg) {
-            ArrayList<String> words = new ArrayList<>(List.of(msg.split(" ")));
-            for (String word : words) {
-                if (word.matches("[0-9]{2}.[0-9]{2}")) {
-                    mesageTxt[0] = word;
-                } else if (word.matches("[A-z]")) {
-                    mesageTxt[1] = word;
-                } else if (word.matches("@[A-z]+")) {
-                    mesageTxt[2] = word;
-                }
-            }
-            words.clear();
-        }
+    /**
+     * This method is scheduled to run every minute
+     * It checks if there are any reminders to send
+     * If there are, it sends them
+     */
+    public List<String> separateMsg(String msg) {
+        List<String> messageTxt = new ArrayList<>(3);
+        for (String word : msg.split("\\n+")) {
+            if (word.matches("[0-9]{2}.[0-9]{2}") || word.matches("[A-z]") || word.matches("@[A-z]+")) {
+                messageTxt.add(word);
 
-        /**
-         * This method is scheduled to run every minute
-         * It checks if there are any reminders to send
-         * If there are, it sends them
-         */
-
-        public void putReminderInData() {
-            if (mesageTxt[0] != null && mesageTxt[1] != null && mesageTxt[2] != null) {
-                Reminder reminder = new Reminder();
-                reminder.setTxtMesdsage(mesageTxt[1]);
-                reminder.setTime(mesageTxt[0]);
-                reminder.setUserName(mesageTxt[2]);
-                log.info("Reminder was sent to " + mesageTxt[2] + " at " + mesageTxt[0] + " with text: " + mesageTxt[1]);
             }
         }
+        return messageTxt;
+    }
 
-        /**
-         * This method is scheduled to run every minute
-         * It checks if there are any reminders to send
-         * If there are, it sends them
-         */
+    /**
+     * This method is scheduled to run every minute
+     * It checks if there are any reminders to send
+     * If there are, it sends them
+     */
 
-        @Scheduled(cron = "0 0 1 * * ?")
-        public void sendReminder() {
-            LocalDateTime now = LocalDateTime.now();
-            if (reminderDate != null && reminderTime != null) {
-                LocalDateTime reminderDateTime = LocalDateTime.of(reminderDate, reminderTime);
+    public void putReminderInData(List<String> messageTxt) {
+        if (messageTxt.size() == 2) {
+            Reminder reminder = new Reminder();
+            reminder.setTxtMessage(messageTxt.get(1));
+            reminder.setTime(messageTxt.get(0));
+            reminderDate = LocalDate.parse(messageTxt.get(0), DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            reminder.setUserName(messageTxt.get(2));
+            log.info("Reminder was sent to " + messageTxt.get(2) + " at " + messageTxt.get(0) + " with text: " + messageTxt.get(1));
+        }
+    }
 
-                if (now.isEqual(reminderDateTime)) {
-                    SendMessage message = new SendMessage();
-                    message.setText(mesageTxt[1]);
-                    message.setChatId(mesageTxt[2]);
-                    log.info("Reminder was sent to " + mesageTxt[2] + " at " + mesageTxt[0] + " with text: " + mesageTxt[1]);
-                }
+    /**
+     * This method is scheduled to run every minute
+     * It checks if there are any reminders to send
+     * If there are, it sends them
+     */
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void sendReminder(List<String> messageTxt) {
+        LocalDateTime now = LocalDateTime.now();
+        if (reminderDate != null) {
+            LocalDateTime reminderDateTime = LocalDateTime.of(reminderDate, LocalTime.of(1, 0));
+
+            if (now.isEqual(reminderDateTime)) {
+                SendMessage message = new SendMessage();
+                message.setText(messageTxt.get(1));
+                message.setChatId(messageTxt.get(2));
+                log.info("Reminder was sent to " + messageTxt.get(2) + " at " + messageTxt.get(0) + " with text: " + messageTxt.get(1));
             }
         }
+    }
 }

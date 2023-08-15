@@ -27,6 +27,7 @@ import java.util.List;
 /**
  * This class is responsible for receiving updates from Telegram API
  * and sending messages to users
+ *
  * @author Nikita
  */
 @Slf4j
@@ -35,9 +36,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-   private ReminderRepository reminderRepository;
 
     final BotConfig config;
     static final String HELP_TXT = "This is a bot for ThirdWheel app. " +
@@ -48,19 +46,20 @@ public class TelegramBot extends TelegramLongPollingBot {
     /**
      * Constructor for TelegramBot
      * It sets bot's commands
+     *
      * @param config BotConfig object
      */
     public TelegramBot(BotConfig config) {
         this.config = config;
-        List <BotCommand> listOfCommands = new ArrayList<>();
+        List<BotCommand> listOfCommands = new ArrayList<>();
         listOfCommands.add(new BotCommand("/start", "Start using bot"));
         listOfCommands.add(new BotCommand("/mydata", "Get your data"));
         listOfCommands.add(new BotCommand("/deletedata", "Delete your data"));
         listOfCommands.add(new BotCommand("/help", "Get help"));
         listOfCommands.add(new BotCommand("/settings", "Change settings"));
-        try{
+        try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
-        } catch (TelegramApiException e){
+        } catch (TelegramApiException e) {
             log.error("Error while setting commands: " + e.getMessage());
         }
 
@@ -68,6 +67,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     /**
      * This method returns bot's name
+     *
      * @return bot's name
      */
     @Override
@@ -78,6 +78,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     /**
      * This method returns bot's token
+     *
      * @return bot's token
      */
     @Override
@@ -86,40 +87,36 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     /**
-     *  This method is called when receiving updates via GetUpdates method
+     * This method is called when receiving updates via GetUpdates method
+     *
      * @param update Update received
      */
 
     @Override
     public void onUpdateReceived(Update update) {
-        if(update.hasMessage() && update.getMessage().hasText()){
+        if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
-            switch (messageText){
-                case "/start":
-
-                    registerUser(update.getMessage());
-                    startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-                    break;
-                case "/help":
-                    sendMessage(chatId, HELP_TXT);
-                    break;
-                case "/makeReminder":
-                    sendMessage(chatId, REMINDER_TXT);
-                    AutomatedReminderServiceTGBot automatedReminderServiceTGBot = new AutomatedReminderServiceTGBot();
-                    automatedReminderServiceTGBot.separateMsd(messageText);
-                    automatedReminderServiceTGBot.putReminderInData();
-                    automatedReminderServiceTGBot.sendReminder();
-                    break;
-                default:
-                    sendMessage(chatId, "I don't understand you");
-                    break;
+            if (messageText.equals("/start")) {
+                registerUser(update.getMessage());
+                startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+            } else if (messageText.equals("/help")) {
+                sendMessage(chatId, HELP_TXT);
+            } else if (messageText.equals("/makeReminder")) {
+                sendMessage(chatId, REMINDER_TXT);
+            } else  if (messageText.startsWith("Напоминание")) {
+                AutomatedReminderServiceTGBot automatedReminderServiceTGBot = new AutomatedReminderServiceTGBot();
+                List<String> txt =  automatedReminderServiceTGBot.separateMsg(messageText);
+                automatedReminderServiceTGBot.putReminderInData(txt);
+                automatedReminderServiceTGBot.sendReminder(txt);
+            } else {
+                sendMessage(chatId, "I dont understand you");
             }
         }
     }
 
-    private void registerUser( Message msg) {
+    private void registerUser(Message msg) {
 
         if (userRepository.findById(msg.getChatId()).isEmpty()) {
 
@@ -138,7 +135,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void startCommandReceived( long chatId, String name){
+    private void startCommandReceived(long chatId, String name) {
         String answer = "Hello, " + name + "!";
         log.info("Replied to user " + name + " with message: " + answer);
 
@@ -147,7 +144,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     }
 
-    private void sendMessage(long chatId, String textToSend){
+    private void sendMessage(long chatId, String textToSend) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textToSend);
@@ -173,7 +170,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-           log.error("Error while sending message: " + e.getMessage());
+            log.error("Error while sending message: " + e.getMessage());
         }
     }
 
