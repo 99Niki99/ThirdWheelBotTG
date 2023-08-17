@@ -105,7 +105,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendMessage(chatId, HELP_TXT);
             } else if (messageText.equals("/makeReminder")) {
                 sendMessage(chatId, REMINDER_TXT);
-            } else  if (messageText.startsWith("Напоминание")) {
+            } else  if (messageText.startsWith("Reminder")) {
                 AutomatedReminderServiceTGBot automatedReminderServiceTGBot = new AutomatedReminderServiceTGBot();
                 List<String> txt =  automatedReminderServiceTGBot.separateMsg(messageText);
                 automatedReminderServiceTGBot.putReminderInData(txt);
