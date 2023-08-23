@@ -1,23 +1,27 @@
 ThirdWheelBotTG
 
+Are you struggling to keep track of your tasks and important commitments? Do you often find yourself missing deadlines and forgetting crucial events? The Telegram Reminder Bot, also known as ThirdWheelBotTG, is here to solve these problems and revolutionize the way you manage your schedule.
 
-The Telegram Reminder Bot is a versatile tool designed to provide seamless and efficient notification services through the Telegram platform. This bot is specifically crafted to assist users in setting up reminders for a wide range of tasks and events, ensuring that no important date or commitment is overlooked. To begin using this bot, follow the step-by-step instructions below to deploy it on your local server.
+Telegram Reminder Bot - Usage Instructions
+The Telegram Reminder Bot, also known as ThirdWheelBotTG, is a powerful tool to help you manage your tasks and commitments through timely reminders. By following these instructions, you can effectively utilize its features to streamline your schedule and never miss an important event.
 
-Usage Instructions:
+Getting Started
+Bot Activation: To initiate the Telegram Reminder Bot, follow these steps:
+Launch the bot on your local server.
+Open Telegram and search for the bot using its username, "Имя бота" (replace with the actual bot username).
+Start a chat with the bot.
+Enter the command \start to activate the bot and make it ready to accept your instructions.
+Setting a Reminder
+Creating a Reminder: Whenever you need to set a reminder, follow these steps:
 
-Start the Bot:
-To initiate the Telegram Reminder Bot, simply enter the command \start. This will activate the bot and make it ready to accept your instructions.
-
-Set a Reminder:
-Whenever you need to set a reminder, use the command \reminder. This command will guide the bot to prompt you for the necessary details of the reminder you wish to create.
-
-Customized Reminders:
-For more personalized reminders, follow this command structure:
-
-sql
-Copy code
+Use the command \reminder in the bot's chat.
+The bot will prompt you for the necessary details of the reminder you wish to create.
+Customized Reminders: For more personalized reminders with specific dates and messages, use the following format:
 "Reminder" + (Date for reminder mm.dd.yyyy) + "Text reminder" + @nikForReminder
-Replace (Date for reminder mm.dd.yyyy) with the specific date you want the reminder for, "Text reminder" with the actual message of the reminder, and @nikForReminder with your Telegram username to ensure you receive the reminder.
+Replace (Date for reminder mm.dd.yyyy) with the actual date you want the reminder for, "Text reminder" with the reminder message, and @nikForReminder with your Telegram username to ensure you receive the reminder.
 
-By ensuring the Telegram Reminder Bot is up and running on your local server, you guarantee uninterrupted access to its powerful reminder services. This bot not only simplifies your task management but also ensures that you stay on top of your commitments with timely alerts for all your important events. Streamline your schedule and never miss a beat with the ThirdWheelBotTG
-.
+For example:
+
+https://github.com/99Niki99/ThirdWheelBotTG/blob/master/photo_2023-08-22_21-49-27.jpg
+
+By following these instructions and ensuring the Telegram Reminder Bot is up and running on your local server, you can access its powerful reminder services seamlessly. This bot simplifies task management and ensures you stay on top of your commitments with timely alerts for all your important events. Never miss a beat with the ThirdWheelBotTG!
