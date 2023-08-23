@@ -2,7 +2,7 @@ package com.example.ThirdWheelBotTG.service;
 
 
 import com.example.ThirdWheelBotTG.config.BotConfig;
-import com.example.ThirdWheelBotTG.model.ReminderRepository;
+import com.example.ThirdWheelBotTG.model.Reminder;
 import com.example.ThirdWheelBotTG.model.User;
 import com.example.ThirdWheelBotTG.model.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -100,7 +100,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             if (messageText.equals("/start")) {
                 registerUser(update.getMessage());
-                startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+                sendMessage( chatId, "Hello" + update.getMessage().getChat().getFirstName() + "!");
             } else if (messageText.equals("/help")) {
                 sendMessage(chatId, HELP_TXT);
             } else if (messageText.equals("/makeReminder")) {
@@ -108,7 +108,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             } else  if (messageText.startsWith("Напоминание")) {
                 AutomatedReminderServiceTGBot automatedReminderServiceTGBot = new AutomatedReminderServiceTGBot();
                 List<String> txt =  automatedReminderServiceTGBot.separateMsg(messageText);
-                automatedReminderServiceTGBot.putReminderInData(txt);
+                Reminder mockReminder = new Reminder();
+                automatedReminderServiceTGBot.putReminderInData(txt, mockReminder);
                 automatedReminderServiceTGBot.sendReminder(txt);
             } else {
                 sendMessage(chatId, "I dont understand you");
@@ -133,15 +134,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             userRepository.save(user);
             log.info("User " + user.getFirstName() + " " + user.getLastName() + " registered");
         }
-    }
-
-    private void startCommandReceived(long chatId, String name) {
-        String answer = "Hello, " + name + "!";
-        log.info("Replied to user " + name + " with message: " + answer);
-
-        sendMessage(chatId, answer);
-
-
     }
 
     private void sendMessage(long chatId, String textToSend) {
