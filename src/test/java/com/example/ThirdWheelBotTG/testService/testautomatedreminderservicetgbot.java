@@ -61,6 +61,7 @@ public class testautomatedreminderservicetgbot {
         verify(mockReminder, times(1)).setTxtMessage("Test reminder");
         verify(mockReminder, times(1)).setTime("01.01.2023");
         verify(mockReminder, times(1)).setUserName("User123");
+        //tests
     }
 
 
