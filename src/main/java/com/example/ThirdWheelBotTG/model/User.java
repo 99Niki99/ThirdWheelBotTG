@@ -2,6 +2,8 @@ package com.example.ThirdWheelBotTG.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 
@@ -13,6 +15,8 @@ import java.sql.Timestamp;
  * It is used to update information about users
  * It is used to delete information about users
  */
+@Getter
+@Setter
 @Entity(name = "usersDataTable")
 public class User {
 
@@ -21,47 +25,8 @@ public class User {
 
     private String firstName;
     private String lastName;
-
-    public Long getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public Timestamp getRegisteredAt() {
-        return registeredAt;
-    }
-
-    public void setRegisteredAt(Timestamp registeredAt) {
-        this.registeredAt = registeredAt;
-    }
-
+    private String userName;
+    private Timestamp registeredAt;
 
     /**
      * @return String return the userName
@@ -77,6 +42,6 @@ public class User {
                 '}';
     }
 
-    private String userName;
-    private Timestamp registeredAt;
+
 }
+
