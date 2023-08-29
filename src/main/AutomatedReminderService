@@ -1,7 +1,0 @@
-package com.example.ThirdWheelBotTG.service;
-
-import org.telegram.telegrambots.meta.api.objects.Message;
-
-public interface AutomatedReminderService {
-    public  void checkPutAndSendReminder(Message msg);
-}
