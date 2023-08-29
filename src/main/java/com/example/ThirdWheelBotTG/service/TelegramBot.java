@@ -2,11 +2,10 @@ package com.example.ThirdWheelBotTG.service;
 
 
 import com.example.ThirdWheelBotTG.config.BotConfig;
-import com.example.ThirdWheelBotTG.model.ReminderRepository;
 import com.example.ThirdWheelBotTG.model.User;
 import com.example.ThirdWheelBotTG.model.UserRepository;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -34,22 +33,32 @@ import java.util.List;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final AutomatedReminderService automatedReminderService;
 
-    final BotConfig config;
+    private final BotConfig config;
     static final String HELP_TXT = "This is a bot for ThirdWheel app. " +
             "You can use it to find a company for your trip. " +
-            "To start using it, type /start";
-    static final String REMINDER_TXT = "Enter the date of the event in the format dd.mm.yyyy, and remind text, and @username of the person you want to remind";
+            "To start using it, type /start.";
+    static  final String REMINDER_TXT = "Enter the date of the event in the format dd.mm.yyyy, and remind text, and @username of the person you want to remind";
 
+    @Inject
+    TelegramBot(UserRepository userRepository, AutomatedReminderService automatedReminderService) {
+        this.userRepository = userRepository;
+        this.config = new BotConfig();
+        this.automatedReminderService = automatedReminderService;
+    }
     /**
      * Constructor for TelegramBot
      * It sets bot's commands
      *
-     * @param config BotConfig object
+     * @param userRepository
+     * @param automatedReminderService
+     * @param config                   BotConfig object
      */
-    public TelegramBot(BotConfig config) {
+    public TelegramBot(UserRepository userRepository, AutomatedReminderService automatedReminderService, BotConfig config) {
+        this.userRepository = userRepository;
+        this.automatedReminderService = automatedReminderService;
         this.config = config;
         List<BotCommand> listOfCommands = new ArrayList<>();
         listOfCommands.add(new BotCommand("/start", "Start using bot"));
@@ -100,16 +109,13 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             if (messageText.equals("/start")) {
                 registerUser(update.getMessage());
-                startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+                sendMessage( chatId, "Hello" + update.getMessage().getChat().getFirstName() + "!");
             } else if (messageText.equals("/help")) {
                 sendMessage(chatId, HELP_TXT);
             } else if (messageText.equals("/makeReminder")) {
                 sendMessage(chatId, REMINDER_TXT);
             } else  if (messageText.startsWith("Reminder")) {
-                AutomatedReminderServiceTGBot automatedReminderServiceTGBot = new AutomatedReminderServiceTGBot();
-                List<String> txt =  automatedReminderServiceTGBot.separateMsg(messageText);
-                automatedReminderServiceTGBot.putReminderInData(txt);
-                automatedReminderServiceTGBot.sendReminder(txt);
+                 automatedReminderService.checkPutAndSendReminder(update.getMessage());
             } else {
                 sendMessage(chatId, "I dont understand you");
             }
@@ -129,19 +135,9 @@ public class TelegramBot extends TelegramLongPollingBot {
             user.setLastName(chat.getLastName());
             user.setUserName(chat.getUserName());
             user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
-
             userRepository.save(user);
             log.info("User " + user.getFirstName() + " " + user.getLastName() + " registered");
         }
-    }
-
-    private void startCommandReceived(long chatId, String name) {
-        String answer = "Hello, " + name + "!";
-        log.info("Replied to user " + name + " with message: " + answer);
-
-        sendMessage(chatId, answer);
-
-
     }
 
     private void sendMessage(long chatId, String textToSend) {
