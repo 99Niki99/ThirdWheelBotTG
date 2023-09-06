@@ -43,9 +43,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     static  final String REMINDER_TXT = "Enter the date of the event in the format dd.mm.yyyy, and remind text, and @username of the person you want to remind";
 
     @Inject
-    TelegramBot(UserRepository userRepository, AutomatedReminderService automatedReminderService) {
+    TelegramBot(UserRepository userRepository, AutomatedReminderService automatedReminderService , BotConfig config) {
         this.userRepository = userRepository;
-        this.config = new BotConfig();
+        this.config = config; //Not New check how be before
         this.automatedReminderService = automatedReminderService;
     }
     /**
