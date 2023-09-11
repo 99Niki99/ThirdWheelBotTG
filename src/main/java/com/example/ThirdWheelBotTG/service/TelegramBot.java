@@ -33,29 +33,29 @@ import java.util.List;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
-    private final UserRepository userRepository;
-    private final AutomatedReminderService automatedReminderService;
 
-    private final BotConfig config;
+
     static final String HELP_TXT = "This is a bot for ThirdWheel app. " +
             "You can use it to find a company for your trip. " +
             "To start using it, type /start.";
     static  final String REMINDER_TXT = "Enter the date of the event in the format dd.mm.yyyy, and remind text, and @username of the person you want to remind";
+    private final UserRepository userRepository;
+    private final BotConfig config;
+    private final AutomatedReminderService automatedReminderService;
 
-    @Inject
-    TelegramBot(UserRepository userRepository, AutomatedReminderService automatedReminderService , BotConfig config) {
-        this.userRepository = userRepository;
-        this.config = config; //Not New check how be before
-        this.automatedReminderService = automatedReminderService;
-    }
     /**
      * Constructor for TelegramBot
      * It sets bot's commands
      */
-    public TelegramBot(UserRepository userRepository, AutomatedReminderService automatedReminderService, BotConfig config) {
+    @Inject
+    public TelegramBot(UserRepository userRepository, BotConfig config, AutomatedReminderService automatedReminderService) {
         this.userRepository = userRepository;
-        this.automatedReminderService = automatedReminderService;
         this.config = config;
+        this.automatedReminderService = automatedReminderService;
+
+    }
+
+    public void TelegramBotComand() {
         List<BotCommand> listOfCommands = new ArrayList<>();
         listOfCommands.add(new BotCommand("/start", "Start using bot"));
         listOfCommands.add(new BotCommand("/mydata", "Get your data"));
@@ -167,3 +167,4 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
 }
+
